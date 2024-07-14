@@ -1,0 +1,37 @@
+{
+    "rabbitmq": {
+        "user": "guest",
+        "password": "24785699",
+        "host": "192.168.1.150",
+        "port": 5672
+    },
+    "data_collector": {
+        "schedule_interval": 60,
+        "stocks": [
+            "AAPL", "GOOGL", "MSFT", "AMZN", "META", "TSLA", "NFLX", "NVDA", "ADBE", "INTC", 
+            "AMD", "CSCO", "ORCL", "IBM", "BABA", "T", "VZ", "PYPL", "CRM", "SHOP"
+        ]
+    },
+    "data_recorder": {
+        "database": {
+            "host": "localhost",
+            "port": 5432,
+            "user": "odct_dba",
+            "password": "dfc6340a-4cba-45c2-aa90-72ceb71eb024",
+            "dbname": "stock_vision_db"
+        }
+    },
+    "data_analyzer": {
+        "analysis_interval": 300
+    },
+    "stock_server": {
+        "host": "0.0.0.0",
+        "port": 5000,
+        "debug": true
+    },
+    "api_server": {
+        "host": "0.0.0.0",
+        "port": 5001,
+        "debug": true
+    }
+}

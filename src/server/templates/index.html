@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Data</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <h1>Stock Data</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Ticker</th>
+                <th>Date</th>
+                <th>Open</th>
+                <th>High</th>
+                <th>Low</th>
+                <th>Close</th>
+                <th>Volume</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for data in stock_data_results %}
+            <tr>
+                <td>{{ data.ticker }}</td>
+                <td>{{ data.date }}</td>
+                <td>{{ data.open }}</td>
+                <td>{{ data.high }}</td>
+                <td>{{ data.low }}</td>
+                <td>{{ data.close }}</td>
+                <td>{{ data.volume }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

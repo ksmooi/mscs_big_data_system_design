@@ -1,0 +1,68 @@
+# Start docker container:
+#   Ratel UI      : http://192.168.1.150:8000/?latest
+#   Alpha instance: http://192.168.1.150:8080 (is used in Ratel UI)
+#   GraphQL       : http://192.168.1.150:8080/graphql
+# 
+# cd /home/ksmooi/Workshop/docker
+# docker-compose up -d
+#
+# cd /home/ksmooi/workspace/git/odct_4x/docker
+# docker-compose up -d
+# -------------------------------------------------------------------------
+
+# Stop docker container:
+# cd /home/ksmooi/workspace/git/odct_4x/docker
+# docker-compose down
+# -------------------------------------------------------------------------
+
+version: '3.6'
+services:
+  # Dgraph database
+  # Dgraph Zero is responsible for cluster management, including maintaining the membership information of Alpha nodes, 
+  # distributing data shards, and managing the RAFT consensus algorithm for leader election among the Alpha nodes.
+  zero:
+    image: dgraph/dgraph:v23.1.1
+    volumes:
+      #- /tmp/data:/dgraph
+      - /var/lib/dgraph:/dgraph
+    ports:
+      - 5080:5080
+      - 6080:6080
+    restart: on-failure
+    command: dgraph zero --my=zero:5080
+  
+  # Dgraph Alpha nodes are responsible for storing and serving the graph data. They handle queries, mutations, and data retrieval.
+  alpha:
+    image: dgraph/dgraph:v23.1.1
+    volumes:
+      #- /tmp/data:/dgraph
+      - /var/lib/dgraph:/dgraph
+    ports:
+      - 8080:8080
+      - 9080:9080
+    restart: on-failure
+    command: dgraph alpha --my=alpha:7080 --zero=zero:5080 --security whitelist=127.0.0.1,192.168.1.0/24
+  
+  # Dgraph Ratel is the web-based UI for interacting with Dgraph. It allows users to visualize the schema, 
+  # run queries and mutations, and manage the database through a graphical interface.
+  ratel:
+    image: dgraph/ratel:v21.12.0
+    ports:
+      - 8000:8000
+
+  # RabbitMQ service with management plugin
+  # http://192.168.1.150:15672/
+  # username: guest
+  # password: 24785699
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    volumes:
+      - /var/lib/rabbitmq:/var/lib/rabbitmq
+    ports:
+      - 5672:5672
+      - 15672:15672
+    restart: on-failure
+    
+networks:
+  default:
+    driver: bridge
