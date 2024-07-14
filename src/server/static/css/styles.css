@@ -1,6 +1,7 @@
 body {
     font-family: Arial, sans-serif;
     margin: 20px;
+    background-color: #f8f9fa;
 }
 
 h1 {
@@ -10,6 +11,8 @@ h1 {
 table {
     width: 100%;
     border-collapse: collapse;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 table, th, td {
@@ -17,10 +20,43 @@ table, th, td {
 }
 
 th, td {
-    padding: 8px;
+    padding: 12px;
     text-align: left;
 }
 
 th {
+    background-color: #007bff;
+    color: white;
+}
+
+tbody tr:nth-child(even) {
     background-color: #f2f2f2;
+}
+
+tbody tr:hover {
+    background-color: #e9ecef;
+}
+
+td {
+    font-size: 14px;
+}
+
+/* DataTables customizations */
+.dataTables_wrapper .dataTables_filter {
+    float: right;
+    text-align: right;
+}
+
+.dataTables_wrapper .dataTables_paginate {
+    float: right;
+    text-align: right;
+}
+
+.dataTables_wrapper .dataTables_length {
+    float: left;
+}
+
+.dataTables_wrapper .dataTables_info {
+    float: left;
+    padding-top: 8px;
 }

@@ -5,10 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stock Data</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
 </head>
 <body>
     <h1>Stock Data</h1>
-    <table>
+    <table id="stockTable" class="display">
         <thead>
             <tr>
                 <th>Ticker</th>
@@ -34,5 +35,21 @@
             {% endfor %}
         </tbody>
     </table>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#stockTable').DataTable({
+                "paging": true,
+                "searching": true,
+                "ordering": true,
+                "order": [[1, 'desc']], // Default order by Date descending
+                "columnDefs": [
+                    { "type": "date", "targets": 1 } // Ensure the Date column is sorted as a date
+                ]
+            });
+        });
+    </script>
 </body>
 </html>
