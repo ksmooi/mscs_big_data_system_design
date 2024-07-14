@@ -26,12 +26,12 @@
     },
     "stock_server": {
         "host": "0.0.0.0",
-        "port": 5000,
+        "port": 60001,
         "debug": true
     },
     "api_server": {
         "host": "0.0.0.0",
-        "port": 5001,
+        "port": 60002,
         "debug": true
     }
 }
