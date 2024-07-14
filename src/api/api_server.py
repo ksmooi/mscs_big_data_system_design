@@ -6,9 +6,9 @@ def create_app():
     app.register_blueprint(api_blueprint, url_prefix='/api')
     return app
 
-def run_app():
+def run_api_server():
     app = create_app()
     app.run(host='0.0.0.0', port=5001, debug=False, use_reloader=False)
 
 if __name__ == '__main__':
-    run_app()
+    run_api_server()

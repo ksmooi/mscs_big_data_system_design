@@ -8,8 +8,8 @@ import time
 from collector.data_collector import start_producing
 from recorder.data_recorder import start_consuming
 from analyzer.data_analyzer import start_analyzing
-from server.app import run_app as run_web_app
-from api.api_server import run_app as run_api_app
+from server.stock_server import run_stock_server
+from api.api_server import run_api_server
 import os
 import json
 
@@ -34,11 +34,11 @@ def start_data_analyzer():
 
 # Function to start the Stock Server in a separate thread
 def start_stock_server():
-    run_web_app()
+    run_stock_server()
 
 # Function to start the API Server in a separate thread
 def start_api_server():
-    run_api_app()
+    run_api_server()
 
 # Main function to start all services
 def main():

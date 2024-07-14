@@ -64,9 +64,9 @@ def create_app():
 
     return app
 
-def run_app():
+def run_stock_server():
     app = create_app()
     app.run(host=config['stock_server']['host'], port=config['stock_server']['port'], debug=config['stock_server']['debug'], use_reloader=False)
 
 if __name__ == '__main__':
-    run_app()
+    run_stock_server()
