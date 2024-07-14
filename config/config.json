@@ -16,8 +16,8 @@
         "database": {
             "host": "localhost",
             "port": 5432,
-            "user": "odct_dba",
-            "password": "dfc6340a-4cba-45c2-aa90-72ceb71eb024",
+            "user": "mscs_dba",
+            "password": "24785699",
             "dbname": "stock_vision_db"
         }
     },
