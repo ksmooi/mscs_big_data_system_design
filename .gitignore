@@ -20,3 +20,4 @@ src/recorder/__pycache__/data_recorder.cpython-38.pyc
 tests/__pycache__/test_api_server.cpython-38.pyc
 tests/__pycache__/test_rabbitmq.cpython-38.pyc
 *.pyc
+*.pyc

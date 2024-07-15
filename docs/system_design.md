@@ -2,10 +2,29 @@
 
 ## Introduction
 
-### Purpose
-The purpose of this document is to provide a comprehensive system design for StockVision, a system that collects, processes, analyzes, and visualizes stock market data. This document outlines the project's requirements, design decisions, system architecture, components, and testing strategies to ensure the development of a robust, scalable, and maintainable solution. StockVision aims to offer real-time insights and analysis for stock market data, catering to financial analysts, traders, and individual investors.
+### A Solution for User-Centric Stock Analysis
 
-### Scope
+The StockVision system is designed to meet the diverse needs of users who require efficient and comprehensive stock market analysis and insights. Here’s how StockVision caters to various user requirements:
+
+1. **Real-Time Stock Data Access:**
+   - Users need timely and accurate stock market data to make informed investment decisions. StockVision’s Data Collector Service fetches real-time stock data from the Yahoo Finance API at regular intervals, ensuring users always have the latest market information.
+
+2. **In-Depth Stock Analysis:**
+   - Investors and analysts require detailed analysis of stock performance over time. StockVision’s Data Analyzer Service processes the collected data, performing various analyses, such as calculating moving averages. These insights help users understand market trends and make strategic decisions.
+
+3. **User-Friendly Web Interface:**
+   - A user-friendly and intuitive web interface is essential for users to easily access and interpret stock data and analysis results. The Stock Server provides a responsive web interface where users can view comprehensive stock data, detailed analysis, and visualize trends effectively.
+
+4. **Programmatic Access to Data:**
+   - For users who prefer automated solutions and integration with other tools, the API Server offers a RESTful API. This allows users to programmatically access stock data and analysis results, enabling seamless integration with their own applications or services.
+
+5. **Secure and Managed Data Storage:**
+   - Users need assurance that their data is securely stored and managed. StockVision utilizes PostgreSQL for robust and reliable data storage, ensuring that all stock data, analysis results, and user information are securely saved and easily retrievable.
+
+6. **Scalable and Efficient Communication:**
+   - Efficient communication between various services is crucial for maintaining the system’s performance. RabbitMQ serves as the message broker in StockVision, facilitating smooth and scalable message exchanges between the Data Collector, Data Recorder, and Data Analyzer services.
+
+### Project Scope
 StockVision encompasses the entire workflow from data collection to data visualization. The scope of this project includes:
 - Collecting stock data from Yahoo Finance using a Data Collector Service.
 - Managing message queues with RabbitMQ for reliable and scalable data processing.
@@ -53,13 +72,26 @@ With these requirements, StockVision will deliver a comprehensive solution for c
 ## System Design
 
 ### System Architecture
-The system architecture of StockVision is designed to ensure scalability, reliability, and maintainability. The architecture consists of the following components:
-- **Data Collector Service**: Periodically fetches stock data from the Yahoo Finance API.
-- **RabbitMQ Broker**: Manages message queues for asynchronous data processing.
-- **Data Recorder Service**: Consumes raw stock data from RabbitMQ and stores it in PostgreSQL.
-- **Data Analyzer Service**: Analyzes stock data and stores the analysis results in PostgreSQL.
-- **Stock Server (Flask Web Server)**: Provides a web interface for visualizing stock data and analysis results.
-- **API Server (Flask RESTful API Server)**: Exposes RESTful endpoints for accessing stock data and analysis results.
+
+<img src="res/app_tier_arch.jpg" width="800" alt="System Architecture">
+
+The StockVision system design follows a three-tier architecture, comprising the Presentation Tier, Application Tier, and Data Tier. The Presentation Tier includes the Stock Server, providing a web interface for users to view stock data and analysis results, along with static files like HTML, CSS, and JavaScript. The Application Tier encompasses core business logic services: the Data Collector Service, which fetches stock data; the Data Recorder Service, which stores data in the database; the Data Analyzer Service, which performs data analysis; and the API Server, offering a RESTful API for data access. The Data Tier handles data storage and management through a PostgreSQL Database for storing various data types and a RabbitMQ Message Broker for facilitating communication between services. This architecture ensures modularity, scalability, and maintainability of the system.
+
+1. **Presentation Tier (Client Layer)**
+    - This tier is responsible for interacting with the end users. It includes the Stock Server, which provides a web interface for users to view stock data and analysis results. The static files (HTML, CSS, and JavaScript) are used to render the web interface, ensuring users have a responsive and user-friendly experience.
+
+2. **Application Tier (Business Logic Layer)**
+    - This tier contains the core business logic of the system. It comprises several services:
+        - **Data Collector Service**: Periodically fetches stock data from external sources (e.g., Yahoo Finance API).
+        - **Data Recorder Service**: Consumes stock data messages from RabbitMQ and stores them in the database.
+        - **Data Analyzer Service**: Analyzes the stored stock data and saves the results back to the database.
+        - **API Server**: Provides a RESTful API for programmatic access to stock data and analysis results.
+    - These services work together to collect, store, analyze, and serve stock data.
+
+3. **Data Tier (Database Layer)**
+    - This tier is responsible for data storage and management. It includes:
+        - **PostgreSQL Database**: A relational database that stores raw stock data, analysis results, user information, API keys, and logs.
+        - **RabbitMQ Message Broker**: Manages the communication between the various services in the application tier by handling message queues, ensuring reliable data processing and transfer.
 
 ### Components Description
 - **Data Collector Service**: This service retrieves stock data for a predefined list of stock tickers from the Yahoo Finance API. It publishes the raw stock data to a RabbitMQ queue for further processing.
@@ -167,6 +199,8 @@ With these detailed descriptions, responsibilities, and implementation details, 
 
 
 ## Data Management
+
+<img src="res/ermodel_diagram.jpg" width="600" alt="DB ER Model">
 
 ### Database Design
 - **Schema Overview**: The PostgreSQL database schema is designed to store raw stock data, analysis results, user information, and logs. The main tables include `stock_data`, `stock_analysis`, `analysis_types`, `api_keys`, `users`, and `logs`.
@@ -302,7 +336,7 @@ The testing strategy for StockVision involves a combination of unit testing, int
 - **Continuous Integration**: Integrate automated tests into the CI/CD pipeline using tools like GitLab CI/CD. Ensure tests are run automatically on code commits and before deployments.
 - **Test Coverage**: Use tools like `coverage.py` to measure test coverage and ensure critical parts of the codebase are well-tested.
 
-## Sample Unit Test Case
+### Sample Unit Test Case
 
 Here is an example of a unit test case for the API Server using `unittest`:
 
