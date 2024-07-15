@@ -26,6 +26,8 @@ Follow the step-by-step guide to install and configure the StockView system on y
 
 ## Major Features
 
+<img src="docs/res/web_client_snapshot.jpg" width="800" alt="Web Client UI">
+
 ### [Data Collection](src/collector/data_collector.py)
 
 The Data Collector Service fetches real-time stock data from the Yahoo Finance API at regular intervals, ensuring users always have access to the latest market information.
