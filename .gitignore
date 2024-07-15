@@ -1,8 +1,5 @@
 # Ignore compiled Python files
 *.pyc
-*/*.pyc
-*/*/*.pyc
-*/*/*/*.pyc
 
 # Ignore virtual environment folder
 myenv/
@@ -15,3 +12,11 @@ __pycache__/
 .idea/
 node_modules/
 
+src/analyzer/__pycache__/data_analyzer.cpython-38.pyc
+src/api/__pycache__/api_server.cpython-38.pyc
+src/api/__pycache__/routes.cpython-38.pyc
+src/collector/__pycache__/data_collector.cpython-38.pyc
+src/recorder/__pycache__/data_recorder.cpython-38.pyc
+tests/__pycache__/test_api_server.cpython-38.pyc
+tests/__pycache__/test_rabbitmq.cpython-38.pyc
+*.pyc

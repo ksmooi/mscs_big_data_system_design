@@ -1,3 +1,8 @@
+# python3 -m venv myenv && source myenv/bin/activate
+# pip install --upgrade pip && pip install -r requirements.txt
+# python src/analyzer/data_analyzer.py
+# deactivate
+
 import json
 import pika
 import psycopg2
@@ -10,6 +15,7 @@ config_path = os.path.join(os.path.dirname(__file__), '../../config/config.json'
 with open(config_path, 'r') as config_file:
     config = json.load(config_file)
 
+# Configuration parameters
 rabbitmq_config = config['rabbitmq']
 data_analyzer_config = config['data_analyzer']
 db_config = config['data_recorder']['database']
@@ -31,6 +37,9 @@ DB_NAME = db_config['dbname']
 
 # PostgreSQL connection setup
 def get_db_connection():
+    """
+    Establishes and returns a connection to the PostgreSQL database.
+    """
     return psycopg2.connect(
         host=DB_HOST,
         port=DB_PORT,
@@ -41,6 +50,9 @@ def get_db_connection():
 
 # RabbitMQ connection setup
 def get_rabbitmq_connection():
+    """
+    Establishes and returns a connection to the RabbitMQ server.
+    """
     credentials = pika.PlainCredentials(RABBITMQ_USER, RABBITMQ_PASS)
     return pika.BlockingConnection(pika.ConnectionParameters(
         host=RABBITMQ_HOST,
@@ -50,6 +62,10 @@ def get_rabbitmq_connection():
 
 # Function to perform analysis on stock data
 def analyze_stock_data(ticker):
+    """
+    Retrieves the last 30 days of stock data for a given ticker, performs analysis
+    (calculates moving averages), and returns the analysis result.
+    """
     conn = get_db_connection()
     cursor = conn.cursor()
 
@@ -98,6 +114,9 @@ def analyze_stock_data(ticker):
 
 # Function to store analysis results into the PostgreSQL database
 def store_analysis_result(result):
+    """
+    Stores the analysis result in the PostgreSQL database.
+    """
     conn = get_db_connection()
     cursor = conn.cursor()
     insert_query = """
@@ -117,6 +136,10 @@ def store_analysis_result(result):
 
 # Function to process messages from RabbitMQ
 def callback(ch, method, properties, body):
+    """
+    Callback function to process messages received from RabbitMQ.
+    Extracts the ticker from the message, performs analysis, and stores the results.
+    """
     stock_data = json.loads(body)
     ticker = stock_data['ticker']
     print(f"Received message for ticker: {ticker}")
@@ -128,6 +151,9 @@ def callback(ch, method, properties, body):
 
 # Function to start consuming messages from RabbitMQ
 def start_analyzing():
+    """
+    Starts consuming messages from the RabbitMQ queue and processes them using the callback function.
+    """
     connection = get_rabbitmq_connection()
     channel = connection.channel()
     channel.queue_declare(queue=QUEUE, durable=True)

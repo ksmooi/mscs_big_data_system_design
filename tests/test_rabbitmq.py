@@ -1,7 +1,6 @@
 # python3 -m venv myenv && source myenv/bin/activate
-# pip install --upgrade pip && pip install pika
-# pip freeze > requirements.txt
-# python test_rabbitmq.py
+# pip install --upgrade pip && pip install -r requirements.txt
+# python tests/test_rabbitmq.py
 # deactivate
 
 import pika
@@ -15,8 +14,13 @@ RABBITMQ_PASS = '24785699'
 RABBITMQ_HOST = '192.168.1.150'
 RABBITMQ_PORT = 5672
 
-# Connection and channel setup
 def get_rabbitmq_connection():
+    """
+    Establishes and returns a connection to the RabbitMQ server.
+    
+    Returns:
+        pika.BlockingConnection: A connection object to interact with the RabbitMQ server.
+    """
     credentials = pika.PlainCredentials(RABBITMQ_USER, RABBITMQ_PASS)
     return pika.BlockingConnection(pika.ConnectionParameters(
         host=RABBITMQ_HOST,
@@ -24,8 +28,12 @@ def get_rabbitmq_connection():
         credentials=credentials
     ))
 
-# Delete existing exchange if exists
 def delete_exchange():
+    """
+    Deletes the existing 'stockvision_exchange' exchange from RabbitMQ if it exists.
+    
+    This function ensures that any existing exchange is deleted before setting up a new one.
+    """
     connection = get_rabbitmq_connection()
     channel = connection.channel()
     try:
@@ -35,8 +43,13 @@ def delete_exchange():
         print(f"Failed to delete exchange: {e}")
     connection.close()
 
-# Declare exchanges, queues, and bindings
 def setup_rabbitmq():
+    """
+    Declares exchanges, queues, and bindings in RabbitMQ.
+    
+    This function sets up the necessary exchange and queues for the StockVision system,
+    and binds the queues to the exchange with specific routing keys.
+    """
     connection = get_rabbitmq_connection()
     channel = connection.channel()
 
@@ -54,8 +67,13 @@ def setup_rabbitmq():
     connection.close()
     print("RabbitMQ setup completed.")
 
-# Data Collector Service: Publish stock data
 def data_collector_service():
+    """
+    Publishes stock data to RabbitMQ.
+    
+    This function simulates the Data Collector Service by publishing a stock data message
+    to the 'stockvision_exchange' exchange with the 'stock.data' routing key.
+    """
     connection = get_rabbitmq_connection()
     channel = connection.channel()
 
@@ -74,15 +92,28 @@ def data_collector_service():
     connection.close()
     print(f"Published message to stock.data: {message}")
 
-# Data Recorder Service: Consume stock data
 def data_recorder_service(stop_event):
+    """
+    Consumes stock data from RabbitMQ and records it to the RDBMS.
+    
+    Args:
+        stop_event (threading.Event): An event to signal when to stop consuming messages.
+    """
     connection = get_rabbitmq_connection()
     channel = connection.channel()
 
     def callback(ch, method, properties, body):
+        """
+        Callback function to process messages from RabbitMQ.
+        
+        Args:
+            ch (BlockingChannel): The channel object.
+            method (spec.Basic.Deliver): Method frame with delivery properties.
+            properties (spec.BasicProperties): Properties of the message.
+            body (bytes): The message body.
+        """
         stock_data = json.loads(body)
         print(f"Received message from stock.data: {stock_data}")
-        # Simulate recording data to RDBMS
         record_stock_data(stock_data)
 
     channel.basic_consume(queue='stock_data_queue', on_message_callback=callback, auto_ack=True)
@@ -95,11 +126,21 @@ def data_recorder_service(stop_event):
     connection.close()
 
 def record_stock_data(data):
-    # Simulate recording data to a database
+    """
+    Simulates recording stock data to a database.
+    
+    Args:
+        data (dict): A dictionary containing the stock data to be recorded.
+    """
     print(f"Recording stock data to RDBMS: {data}")
 
-# Main function
 def main():
+    """
+    Main function to set up RabbitMQ and run the Data Collector and Data Recorder services.
+    
+    This function deletes any existing exchange, sets up the necessary RabbitMQ components,
+    starts the Data Collector Service, and runs the Data Recorder Service in a separate thread.
+    """
     delete_exchange()
     setup_rabbitmq()
 
@@ -119,4 +160,9 @@ def main():
         recorder_thread.join()
 
 if __name__ == "__main__":
+    """
+    Entry point for running the script.
+    
+    When the script is run directly, this block will execute and start the main function.
+    """
     main()

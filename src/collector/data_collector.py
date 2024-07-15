@@ -1,6 +1,6 @@
 # python3 -m venv myenv && source myenv/bin/activate
 # pip install --upgrade pip && pip install -r requirements.txt
-# python data_collector.py
+# python src/collector/data_collector.py
 # deactivate
 
 import json
@@ -16,6 +16,7 @@ config_path = os.path.join(os.path.dirname(__file__), '../../config/config.json'
 with open(config_path, 'r') as config_file:
     config = json.load(config_file)
 
+# RabbitMQ configuration parameters
 rabbitmq_config = config['rabbitmq']
 data_collector_config = config['data_collector']
 
@@ -29,8 +30,10 @@ EXCHANGE_TYPE = 'topic'
 ROUTING_KEY = 'stock.data'
 QUEUE = 'stock_data_queue'
 
-# Connection and channel setup
 def get_rabbitmq_connection():
+    """
+    Establishes and returns a connection to the RabbitMQ server.
+    """
     credentials = pika.PlainCredentials(RABBITMQ_USER, RABBITMQ_PASS)
     return pika.BlockingConnection(pika.ConnectionParameters(
         host=RABBITMQ_HOST,
@@ -39,6 +42,9 @@ def get_rabbitmq_connection():
     ))
 
 def setup_rabbitmq():
+    """
+    Sets up RabbitMQ by declaring the exchange, queue, and binding them together.
+    """
     connection = get_rabbitmq_connection()
     channel = connection.channel()
 
@@ -55,6 +61,15 @@ def setup_rabbitmq():
     print("RabbitMQ setup completed.")
 
 def fetch_stock_data(ticker):
+    """
+    Fetches the latest stock data for a given ticker using Yahoo Finance API.
+    
+    Args:
+        ticker (str): The stock ticker symbol.
+        
+    Returns:
+        dict: A dictionary containing the stock data.
+    """
     stock = yf.Ticker(ticker)
     hist = stock.history(period="1d")
     if hist.empty:
@@ -72,6 +87,12 @@ def fetch_stock_data(ticker):
     return data
 
 def publish_stock_data(data):
+    """
+    Publishes the stock data to the RabbitMQ exchange.
+    
+    Args:
+        data (dict): The stock data to be published.
+    """
     connection = get_rabbitmq_connection()
     channel = connection.channel()
 
@@ -82,16 +103,23 @@ def publish_stock_data(data):
         body=message
     )
     connection.close()
-    #print(f"Published message to {ROUTING_KEY}: {message}")
+    # print(f"Published message to {ROUTING_KEY}: {message}")
 
 def collect_and_publish_stock_data():
+    """
+    Collects and publishes stock data for all tickers specified in the configuration.
+    """
     for ticker in data_collector_config['stocks']:
         data = fetch_stock_data(ticker)
         if data:  # Ensure data is not None
-            #print(f"Received data: {data}")  # Print the data for debugging
+            # print(f"Received data: {data}")  # Print the data for debugging
             publish_stock_data(data)
 
 def start_producing():
+    """
+    Starts the data collector service, which sets up RabbitMQ, collects and publishes
+    initial stock data, and schedules periodic data collection.
+    """
     setup_rabbitmq()
     collect_and_publish_stock_data()
     
@@ -105,4 +133,3 @@ def start_producing():
 
 if __name__ == "__main__":
     start_producing()
-

@@ -3,6 +3,7 @@ import psycopg2
 import os
 import json
 
+# Define the API blueprint
 api_blueprint = Blueprint('api', __name__)
 
 # Load configuration from JSON file
@@ -10,6 +11,7 @@ config_path = os.path.join(os.path.dirname(__file__), '../../config/config.json'
 with open(config_path, 'r') as config_file:
     config = json.load(config_file)
 
+# Database configuration parameters
 db_config = config['data_recorder']['database']
 
 # PostgreSQL connection parameters
@@ -20,6 +22,9 @@ DB_PASSWORD = db_config['password']
 DB_NAME = db_config['dbname']
 
 def get_db_connection():
+    """
+    Establishes and returns a connection to the PostgreSQL database.
+    """
     return psycopg2.connect(
         host=DB_HOST,
         port=DB_PORT,
@@ -30,10 +35,19 @@ def get_db_connection():
 
 @api_blueprint.route('/stock_data', methods=['GET'])
 def get_stock_data():
+    """
+    API endpoint to retrieve stock data for a given ticker.
+
+    Query Parameters:
+        ticker (str): The stock ticker symbol.
+
+    Returns:
+        JSON: A list of stock data records for the specified ticker.
+    """
     ticker = request.args.get('ticker')
     if not ticker:
         return jsonify({'error': 'Ticker is required'}), 400
-    
+
     conn = get_db_connection()
     cursor = conn.cursor()
 
@@ -67,10 +81,19 @@ def get_stock_data():
 
 @api_blueprint.route('/analysis_results', methods=['GET'])
 def get_analysis_results():
+    """
+    API endpoint to retrieve analysis results for a given ticker.
+
+    Query Parameters:
+        ticker (str): The stock ticker symbol.
+
+    Returns:
+        JSON: A list of analysis results for the specified ticker.
+    """
     ticker = request.args.get('ticker')
     if not ticker:
         return jsonify({'error': 'Ticker is required'}), 400
-    
+
     conn = get_db_connection()
     cursor = conn.cursor()
 

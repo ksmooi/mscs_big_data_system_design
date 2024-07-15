@@ -1,6 +1,6 @@
 # python3 -m venv myenv && source myenv/bin/activate
 # pip install --upgrade pip && pip install -r requirements.txt
-# python backend.py
+# python src/backend.py
 # deactivate
 
 import threading
@@ -22,26 +22,50 @@ data_collector_config = config['data_collector']
 
 # Function to start the Data Collector Service in a separate thread
 def start_data_collector():
+    """
+    Function to start the Data Collector Service.
+    This service fetches stock data from Yahoo Finance API and publishes it to RabbitMQ.
+    """
     start_producing()
 
 # Function to start the Data Recorder Service in a separate thread
 def start_data_recorder():
+    """
+    Function to start the Data Recorder Service.
+    This service consumes messages from RabbitMQ and stores the collected stock data in the RDBMS.
+    """
     start_consuming()
 
 # Function to start the Data Analyzer Service in a separate thread
 def start_data_analyzer():
+    """
+    Function to start the Data Analyzer Service.
+    This service analyzes stock data and stores the results in the RDBMS.
+    """
     start_analyzing()
 
 # Function to start the Stock Server in a separate thread
 def start_stock_server():
+    """
+    Function to start the Stock Server.
+    This server provides a web interface to display analysis results.
+    """
     run_stock_server()
 
 # Function to start the API Server in a separate thread
 def start_api_server():
+    """
+    Function to start the API Server.
+    This server provides a RESTful API to access stock data and analysis results.
+    """
     run_api_server()
 
 # Main function to start all services
 def main():
+    """
+    Main function to start all services of the StockVision Backend Application.
+    It starts the Data Collector, Data Recorder, Data Analyzer, Stock Server, and API Server services in separate threads.
+    """
     print("Starting StockVision Backend Application")
 
     # Start Data Collector Service
